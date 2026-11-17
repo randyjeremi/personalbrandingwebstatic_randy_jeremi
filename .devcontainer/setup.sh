@@ -8,6 +8,9 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
+# Website tidak memakai database: session & cache disimpan sebagai file.
+sed -i 's/^CACHE_STORE=database/CACHE_STORE=file/; s/^SESSION_DRIVER=database/SESSION_DRIVER=file/' .env
+
 # Buat APP_KEY hanya jika belum ada.
 if ! grep -q '^APP_KEY=base64:' .env; then
     php artisan key:generate --no-interaction
