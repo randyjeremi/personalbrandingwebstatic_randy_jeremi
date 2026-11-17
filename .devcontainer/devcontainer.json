@@ -1,0 +1,30 @@
+{
+    "name": "Randy Jeremi Portfolio (Laravel)",
+    "image": "mcr.microsoft.com/devcontainers/php:1-8.4-bookworm",
+
+    // Dijalankan sekali saat Codespace dibuat: install dependency, buat .env & APP_KEY.
+    "postCreateCommand": "bash .devcontainer/setup.sh",
+
+    // Dijalankan setiap kali Codespace dinyalakan: jalankan server Laravel di port 8000.
+    "postStartCommand": "bash .devcontainer/start.sh",
+
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": {
+            "label": "Website",
+            "onAutoForward": "openBrowser"
+        }
+    },
+
+    "customizations": {
+        "codespaces": {
+            "openFiles": ["README.md"]
+        },
+        "vscode": {
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+                "onecentlabs.laravel-blade"
+            ]
+        }
+    }
+}

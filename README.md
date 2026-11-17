@@ -1,5 +1,7 @@
 # Personal Branding Portfolio - Randy Jeremi
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/randyjeremi/personalbrandingwebstatic_randy_jeremi?quickstart=1)
+
 A multidisciplinary creative portfolio showcasing selected works in Graphic Design, UI/UX Design, Web Development, and Art Direction. Exploring the intersection of visual creativity, digital experiences, and technology through thoughtful design and creative experimentation.
 
 ---
@@ -101,6 +103,20 @@ Menjalankan test (mengecek semua halaman di ketiga bahasa dan halaman 404):
 ```bash
 php artisan test
 ```
+
+## Menjalankan di GitHub Codespaces (tanpa install apa pun)
+
+1. Klik tombol **Open in GitHub Codespaces** di atas, atau buka repo lalu pilih **Code → Codespaces → Create codespace on main**.
+2. Tunggu sekitar 1–3 menit. Codespace otomatis menjalankan `composer install`, membuat `.env` dan `APP_KEY`, lalu menyalakan server Laravel di port **8000**.
+3. Website terbuka di tab baru. Kalau tidak terbuka otomatis, buka tab **Ports**, lalu klik ikon 🌐 di baris port **8000 (Website)**.
+4. Agar link bisa dibuka orang lain (misalnya dosen): di tab **Ports**, klik kanan port 8000, pilih **Port Visibility → Public**, lalu salin URL-nya.
+
+Konfigurasinya ada di folder `.devcontainer/`:
+- `devcontainer.json`: image PHP 8.4 dan port 8000.
+- `setup.sh`: persiapan sekali jalan.
+- `start.sh`: menyalakan server setiap kali Codespace aktif.
+
+Codespace berhenti otomatis setelah sekitar 30 menit tidak dipakai. Buka lagi dari **Code → Codespaces**, dan server akan menyala kembali dengan sendirinya. Akun GitHub gratis mendapat kuota sekitar 60 jam per bulan.
 
 ## Deploy (Render)
 
