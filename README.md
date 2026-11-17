@@ -102,6 +102,24 @@ Menjalankan test (mengecek semua halaman di ketiga bahasa dan halaman 404):
 php artisan test
 ```
 
+## Deploy (Render)
+
+Website di-hosting di [Render](https://render.com) dan otomatis ter-deploy ulang setiap kali ada push ke branch `main` di GitHub.
+
+| File | Fungsi |
+|---|---|
+| `Dockerfile` | Membangun image: install dependency dengan Composer, lalu menjalankan Laravel di PHP 8.4 |
+| `docker/start.sh` | Saat server menyala: cache config/route/view, lalu `php artisan serve` di port dari Render |
+| `render.yaml` | Konfigurasi layanan Render (paket gratis, region Singapura, health check `/up`, environment variable) |
+| `.dockerignore` | File yang tidak ikut ke image (`.env`, `vendor`, `assets`, dll.) |
+
+Langkah pertama kali:
+1. Login ke Render dengan akun GitHub, lalu pilih **New → Blueprint** dan pilih repo ini. Render akan membaca `render.yaml`.
+2. Isi environment variable **`APP_KEY`** dengan hasil perintah `php artisan key:generate --show`.
+3. Klik **Deploy**. Setelah selesai, website tersedia di alamat `https://<nama-layanan>.onrender.com`.
+
+Catatan: di paket gratis, server "tidur" setelah 15 menit tanpa pengunjung, sehingga kunjungan pertama setelahnya butuh sekitar 30–60 detik untuk menyala lagi. Laravel dipercayakan ke proxy HTTPS Render lewat `trustProxies()` di `bootstrap/app.php`.
+
 ## Multi Bahasa
 
 1. Pengunjung menekan tombol **ID / EN / 中文** di header (atau di menu pada layar kecil).

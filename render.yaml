@@ -1,0 +1,31 @@
+# Konfigurasi Render (Blueprint): https://render.com/docs/blueprint-spec
+# Render membaca file ini, membangun Dockerfile, dan otomatis deploy ulang setiap ada push ke branch main.
+services:
+  - type: web
+    name: randy-jeremi-portfolio
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Randy Jeremi
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_LOCALE
+        value: id
+      - key: APP_FALLBACK_LOCALE
+        value: id
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      # Diisi manual di dashboard Render (rahasia, tidak disimpan di GitHub).
+      - key: APP_KEY
+        sync: false
