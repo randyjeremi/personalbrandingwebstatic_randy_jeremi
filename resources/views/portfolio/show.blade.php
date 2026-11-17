@@ -6,12 +6,12 @@
 @section('content')
 
     <article>
-        <header class="page-hero page-hero--detail" data-station="Proyek">
-            <a href="{{ route('portfolio.index') }}" class="back-link" data-reveal="fade"><x-arrow dir="left" /> Semua karya</a>
+        <header class="page-hero page-hero--detail" data-station="{{ $project['category_label'] }}">
+            <a href="{{ route('portfolio.index') }}" class="back-link" data-reveal="fade"><x-arrow dir="left" /> {{ __('portfolio.back') }}</a>
 
             <div class="detail-sign" data-reveal="fade">
                 <span class="detail-sign__num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
-                <span class="detail-sign__cat">{{ $project['category'] }}</span>
+                <span class="detail-sign__cat">{{ $project['category_label'] }}</span>
             </div>
 
             <x-section-title tag="h1" :title="$project['title']" :muted="$project['client']" size="xl" />
@@ -24,17 +24,17 @@
         @else
             <div class="detail-media" data-reveal="card">
                 <x-poster :color="$project['color']" :variant="$project['variant']"
-                          :alt="'Visual proyek '.$project['title']" :letter="substr($project['category'], 0, 1)" :label="$project['year']" />
+                          :alt="__('site.project_alt', ['title' => $project['title']])" :letter="mb_substr($project['category_label'], 0, 1)" :label="$project['year']" />
             </div>
         @endif
 
-        <section class="section detail-body" data-station="Detail">
+        <section class="section detail-body" data-station="{{ __('portfolio.spec.role') }}">
             <dl class="spec" data-reveal="fade">
-                <div><dt>Klien</dt><dd>{{ $project['client'] }}</dd></div>
-                <div><dt>Tahun</dt><dd>{{ $project['year'] }}</dd></div>
-                <div><dt>Peran</dt><dd>{{ $project['role'] }}</dd></div>
+                <div><dt>{{ __('portfolio.spec.client') }}</dt><dd>{{ $project['client'] }}</dd></div>
+                <div><dt>{{ __('portfolio.spec.year') }}</dt><dd>{{ $project['year'] }}</dd></div>
+                <div><dt>{{ __('portfolio.spec.role') }}</dt><dd>{{ $project['role'] }}</dd></div>
                 <div>
-                    <dt>Teknologi & keahlian</dt>
+                    <dt>{{ __('portfolio.spec.tech') }}</dt>
                     <dd>
                         <ul class="tags">
                             @foreach ($project['tech'] as $tech)
@@ -54,8 +54,9 @@
         </section>
     </article>
 
-    <a href="{{ route('portfolio.show', $next['slug']) }}" @class(['next-project', 'is-dark' => in_array($next['color'], ['blue', 'red', 'green'])]) style="--c: var(--{{ $next['color'] }})" data-cursor="Lanjut" data-station="Berikutnya">
-        <span class="eyebrow">Proyek berikutnya</span>
+    <a href="{{ route('portfolio.show', $next['slug']) }}" @class(['next-project', 'is-dark' => in_array($next['color'], ['blue', 'red', 'green'])])
+       style="--c: var(--{{ $next['color'] }})" data-cursor="{{ __('site.cursor.next') }}" data-station="{{ __('portfolio.next') }}">
+        <span class="eyebrow">{{ __('portfolio.next') }}</span>
         <span class="next-project__title">{{ $next['title'] }}</span>
         <span class="next-project__arrow"><x-arrow /></span>
     </a>

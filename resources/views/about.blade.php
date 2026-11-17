@@ -1,23 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang Saya')
+@section('title', __('about.title'))
 
 @section('content')
 
     {{-- ============ PROFIL ============ --}}
-    <section class="page-hero" data-station="Profil">
+    <section class="page-hero" data-station="{{ __('about.label') }}">
         <div class="page-hero__label" data-reveal="fade">
-            <x-line-badge letter="2" color="orange" size="sm" /> <span class="eyebrow">Tentang Saya</span>
+            <x-line-badge letter="2" color="orange" size="sm" /> <span class="eyebrow">{{ __('about.label') }}</span>
         </div>
-        <x-section-title tag="h1" title="Halo, saya" muted="Randy Jeremi." size="hero" />
+        <x-section-title tag="h1" :title="__('about.heading')" :muted="config('site.name').'.'" size="hero" />
 
         <div class="about-intro">
             <div class="about-intro__photo" data-reveal="fade">
                 <x-avatar size="xl" />
                 <ul class="facts">
-                    <li><span>Lokasi</span>{{ config('site.location') }}</li>
-                    <li><span>Status</span>{{ config('site.status') }}</li>
-                    <li><span>Mode kerja</span>{{ config('site.work_modes') }}</li>
+                    <li><span>{{ __('about.facts.location') }}</span>{{ __('site.location') }}</li>
+                    <li><span>{{ __('about.facts.status') }}</span>{{ __('site.status') }}</li>
+                    <li><span>{{ __('about.facts.mode') }}</span>{{ __('site.work_modes') }}</li>
                 </ul>
             </div>
 
@@ -26,8 +26,8 @@
                     <p @class(['lead' => $loop->first]) data-reveal="fade">{{ $paragraph }}</p>
                 @endforeach
                 <div class="about-intro__actions" data-reveal="fade">
-                    <x-button :href="route('portfolio.index')">Lihat karya saya</x-button>
-                    <x-button :href="route('contact')" variant="outline">Hubungi</x-button>
+                    <x-button :href="route('portfolio.index')">{{ __('about.btn_work') }}</x-button>
+                    <x-button :href="route('contact')" variant="outline">{{ __('about.btn_contact') }}</x-button>
                 </div>
             </div>
         </div>
@@ -40,11 +40,11 @@
     </section>
 
     {{-- ============ PENGALAMAN ============ --}}
-    <section class="section section--dark" data-station="Pengalaman">
+    <section class="section section--dark" data-station="{{ __('about.experience_title') }}">
         <div class="two-col">
             <div class="two-col__head">
-                <x-section-title title="Pengalaman" muted="kerja" size="lg" />
-                <p class="muted-text" data-reveal="fade">Setiap stasiun adalah tempat saya belajar sesuatu yang baru.</p>
+                <x-section-title :title="__('about.experience_title')" :muted="__('about.experience_muted')" size="lg" />
+                <p class="muted-text" data-reveal="fade">{{ __('about.experience_lead') }}</p>
             </div>
             <ol class="timeline">
                 @foreach ($experiences as $item)
@@ -55,10 +55,10 @@
     </section>
 
     {{-- ============ PENDIDIKAN ============ --}}
-    <section class="section" data-station="Pendidikan">
+    <section class="section" data-station="{{ __('about.education_title') }}">
         <div class="two-col">
             <div class="two-col__head">
-                <x-section-title title="Pendidikan" muted="& latar belakang" size="lg" />
+                <x-section-title :title="__('about.education_title')" :muted="__('about.education_muted')" size="lg" />
             </div>
             <ol class="timeline timeline--light">
                 @foreach ($education as $item)
@@ -69,8 +69,8 @@
     </section>
 
     {{-- ============ SKILLS ============ --}}
-    <section class="section section--tight" data-station="Skills">
-        <x-section-title title="Keahlian" muted="(skills)" size="lg" />
+    <section class="section section--tight" data-station="{{ __('about.skills_title') }}">
+        <x-section-title :title="__('about.skills_title')" :muted="__('about.skills_muted')" size="lg" />
         <div class="skills">
             @foreach ($skills as $group)
                 <div class="skills__row" data-reveal="fade">
@@ -89,8 +89,8 @@
     </section>
 
     {{-- ============ PENGHARGAAN & SERTIFIKASI ============ --}}
-    <section class="section" data-station="Pencapaian">
-        <x-section-title title="Penghargaan" muted="& sertifikasi" size="lg" />
+    <section class="section" data-station="{{ __('about.awards_title') }}">
+        <x-section-title :title="__('about.awards_title')" :muted="__('about.awards_muted')" size="lg" />
 
         <div class="awards">
             @foreach ($awards as $award)

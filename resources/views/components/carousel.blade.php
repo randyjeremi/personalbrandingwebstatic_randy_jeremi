@@ -7,10 +7,11 @@
 @php $total = count($images); @endphp
 
 <div {{ $attributes->merge(['class' => 'carousel']) }} data-carousel>
-    <div class="carousel__track" data-carousel-track data-cursor="Geser" tabindex="0" role="region" aria-label="Galeri {{ $title }}">
+    <div class="carousel__track" data-carousel-track data-cursor="{{ __('site.cursor.drag') }}" tabindex="0" role="region"
+         aria-label="{{ __('site.carousel.gallery', ['title' => $title]) }}">
         @foreach ($images as $i => $image)
             <figure class="carousel__slide" data-carousel-slide>
-                <img src="{{ asset($image) }}" alt="{{ $title }}, gambar {{ $i + 1 }} dari {{ $total }}"
+                <img src="{{ asset($image) }}" alt="{{ __('site.carousel.image', ['title' => $title, 'n' => $i + 1, 'total' => $total]) }}"
                      @if ($i > 1) loading="lazy" @endif draggable="false">
             </figure>
         @endforeach
@@ -24,13 +25,14 @@
 
             <div class="carousel__dots">
                 @foreach ($images as $i => $image)
-                    <button type="button" @class(['carousel__dot', 'is-active' => $loop->first]) data-carousel-dot="{{ $i }}" aria-label="Gambar {{ $i + 1 }}"></button>
+                    <button type="button" @class(['carousel__dot', 'is-active' => $loop->first]) data-carousel-dot="{{ $i }}"
+                            aria-label="{{ __('site.carousel.dot', ['n' => $i + 1]) }}"></button>
                 @endforeach
             </div>
 
             <div class="carousel__nav">
-                <button type="button" data-carousel-prev aria-label="Gambar sebelumnya"><x-arrow dir="left" /></button>
-                <button type="button" data-carousel-next aria-label="Gambar berikutnya"><x-arrow /></button>
+                <button type="button" data-carousel-prev aria-label="{{ __('site.carousel.prev') }}"><x-arrow dir="left" /></button>
+                <button type="button" data-carousel-next aria-label="{{ __('site.carousel.next') }}"><x-arrow /></button>
             </div>
         </div>
     @endif

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+
 class HomeController extends Controller
 {
     /**
      * Halaman Beranda: ringkasan profil, karya unggulan, keahlian, dan artikel terbaru.
      */
-    public function index()
+    public function index(): View
     {
-        // Ambil 3 karya unggulan dari data dummy portofolio.
+        // Ambil 3 karya unggulan dari data portofolio.
         $projects = collect(PortfolioController::projects())
             ->where('featured', true)
             ->take(3)
@@ -21,36 +23,13 @@ class HomeController extends Controller
             ->take(3)
             ->values();
 
-        $services = [
-            [
-                'title' => 'Branding & Identitas Visual',
-                'desc' => 'Logo, sistem visual, dan materi promosi yang konsisten di setiap titik sentuh, dari kemasan sampai feed media sosial.',
-                'color' => 'yellow',
-                'variant' => 'rings',
-                'skills' => ['Logo Design', 'Visual Identity', 'Art Direction', 'Creative Strategy'],
-            ],
-            [
-                'title' => 'UI/UX & Web Design',
-                'desc' => 'Antarmuka dan landing page yang jelas alurnya, enak dipakai, dan dibangun dengan pemahaman teknis rekayasa perangkat lunak.',
-                'color' => 'orange',
-                'variant' => 'bars',
-                'skills' => ['User Interface Design', 'Landing Pages', 'User Experience', 'Figma'],
-            ],
-            [
-                'title' => 'Motion Graphics',
-                'desc' => 'Animasi tipografi, poster bergerak, dan efek visual untuk konten yang berhenti di-scroll.',
-                'color' => 'red',
-                'variant' => 'lines',
-                'skills' => ['After Effects', 'Typography', '3D', 'Storytelling'],
-            ],
-            [
-                'title' => 'AI-Assisted Creative',
-                'desc' => 'Memadukan AI ke dalam proses kreatif supaya produksi visual lebih cepat tanpa kehilangan arah brand.',
-                'color' => 'blue',
-                'variant' => 'dots',
-                'skills' => ['Generative AI', 'Digital Marketing', 'Python', 'Machine Learning'],
-            ],
-        ];
+        // Data tampilan keahlian. Judul & deskripsi diambil dari lang/{bahasa}/home.php.
+        $services = collect([
+            ['key' => 'branding', 'color' => 'yellow', 'variant' => 'rings', 'skills' => ['Logo Design', 'Visual Identity', 'Art Direction', 'Creative Strategy']],
+            ['key' => 'uiux', 'color' => 'orange', 'variant' => 'bars', 'skills' => ['User Interface Design', 'Landing Pages', 'User Experience', 'Figma']],
+            ['key' => 'motion', 'color' => 'red', 'variant' => 'lines', 'skills' => ['After Effects', 'Typography', '3D', 'Storytelling']],
+            ['key' => 'ai', 'color' => 'blue', 'variant' => 'dots', 'skills' => ['Generative AI', 'Digital Marketing', 'Python', 'Machine Learning']],
+        ])->map(fn (array $service) => array_merge($service, __("home.services.{$service['key']}")));
 
         $stats = AboutController::stats();
 

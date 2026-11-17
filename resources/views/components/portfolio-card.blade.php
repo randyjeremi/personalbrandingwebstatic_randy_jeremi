@@ -6,7 +6,7 @@
 ])
 
 <article {{ $attributes->merge(['class' => 'pcard'.($wide ? ' pcard--wide' : '')]) }} data-reveal="card" data-filter-item="{{ $project['category'] }}">
-    <a href="{{ route('portfolio.show', $project['slug']) }}" class="pcard__link" data-cursor="Lihat">
+    <a href="{{ route('portfolio.show', $project['slug']) }}" class="pcard__link" data-cursor="{{ __('site.cursor.view') }}">
         <header class="pcard__sign">
             <span class="pcard__num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
             <span class="pcard__title">
@@ -18,12 +18,12 @@
 
         <div class="pcard__media">
             <x-poster :color="$project['color']" :variant="$project['variant']" :image="$project['image']"
-                      :alt="'Ilustrasi proyek '.$project['title']" :letter="substr($project['category'], 0, 1)" />
+                      :alt="__('site.project_alt', ['title' => $project['title']])" :letter="mb_substr($project['category_label'], 0, 1)" />
         </div>
 
         <div class="pcard__body">
             <p>{{ $project['summary'] }}</p>
-            <ul class="tags" aria-label="Teknologi yang digunakan">
+            <ul class="tags" aria-label="{{ __('site.tech_label') }}">
                 @foreach ($project['tech'] as $tech)
                     <li>{{ $tech }}</li>
                 @endforeach

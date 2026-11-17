@@ -2,23 +2,26 @@
 @php $nav = config('site.nav'); @endphp
 
 <header class="header">
-    <a href="{{ route('home') }}" class="logo" aria-label="{{ config('site.name') }} — Beranda">
+    <a href="{{ route('home') }}" class="logo" aria-label="{{ __('site.home_link', ['name' => config('site.name')]) }}">
         <span>{{ config('site.first_name') }}</span>
         <span>{{ config('site.last_name') }}</span>
     </a>
 
-    <nav class="header__nav" aria-label="Navigasi utama">
+    <nav class="header__nav" aria-label="{{ __('site.main_nav') }}">
         @foreach ($nav as $item)
             <a href="{{ route($item['route']) }}" @class(['is-active' => request()->routeIs($item['match'])])
-               @if (request()->routeIs($item['match'])) aria-current="page" @endif>{{ $item['label'] }}</a>
+               @if (request()->routeIs($item['match'])) aria-current="page" @endif>{{ __("site.nav.{$item['key']}") }}</a>
         @endforeach
     </nav>
 
-    <a href="{{ route('contact') }}" class="header__cta">Hubungi Saya</a>
+    <div class="header__end">
+        <x-preferences class="header__prefs" />
+        <a href="{{ route('contact') }}" class="header__cta">{{ __('site.header_cta') }}</a>
+    </div>
 </header>
 
 <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-toggle>
-    <span class="menu-toggle__label" data-open="Menu" data-close="Tutup">Menu</span>
+    <span class="menu-toggle__label" data-open="{{ __('site.menu') }}" data-close="{{ __('site.close') }}">{{ __('site.menu') }}</span>
     <span class="menu-toggle__dots" aria-hidden="true"><i></i><i></i><i></i></span>
 </button>
 
@@ -29,7 +32,7 @@
                 <li style="--i: {{ $i }}">
                     <a href="{{ route($item['route']) }}" @class(['is-active' => request()->routeIs($item['match'])]) tabindex="-1">
                         <x-line-badge :letter="$item['letter']" :color="$item['color']" size="md" />
-                        <span>{{ $item['label'] }}</span>
+                        <span>{{ __("site.nav.{$item['key']}") }}</span>
                         <x-arrow dir="ne" class="menu__arrow" />
                     </a>
                 </li>
@@ -37,6 +40,7 @@
         </ul>
 
         <div class="menu__foot">
+            <x-preferences class="menu__prefs" />
             <a href="mailto:{{ config('site.email') }}" tabindex="-1">{{ config('site.email') }}</a>
             <div class="menu__socials">
                 @foreach (config('site.socials') as $social)

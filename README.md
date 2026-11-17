@@ -9,6 +9,10 @@ Website ini memperkenalkan profil, pengalaman, keahlian, portofolio, dan tulisan
 
 **Konsep desain:** gaya *Swiss / signage subway* (tipografi grotesk besar, lencana bulat berwarna seperti simbol jalur kereta, panah tebal, garis pemisah) digabung dengan layout dan motion ala studio desain modern: scroll halus, animasi muncul, transisi garis yang berubah menjadi panel, dan kartu bertumpuk.
 
+**Fitur tambahan:**
+- 🌐 **3 bahasa:** Indonesia, English, dan 中文 (Mandarin), mencakup seluruh teks, termasuk isi proyek dan artikel blog.
+- 🎨 **3 tema:** Terang, Gelap, dan Kontras Tinggi (untuk aksesibilitas).
+
 ---
 
 ## Halaman
@@ -22,14 +26,17 @@ Website ini memperkenalkan profil, pengalaman, keahlian, portofolio, dan tulisan
 | Blog | `/blog` | 5 artikel dummy + filter kategori |
 | Detail artikel | `/blog/{slug}` | Isi artikel ("Baca Selengkapnya"), artikel sebelum/sesudah |
 | Kontak | `/contact` | Email, LinkedIn, GitHub, lokasi, status |
+| Ganti bahasa | `/lang/{id\|en\|zh}` | Menyimpan bahasa pilihan, lalu kembali ke halaman sebelumnya |
 | 404 | (URL tidak dikenal) | Halaman error dengan desain yang sama |
 
 ## Penerapan Fitur Laravel
 
 | Fitur | Lokasi | Penjelasan |
 |---|---|---|
-| **Routing** | `routes/web.php` | Semua halaman memakai *named route* (`home`, `about`, `portfolio.index`, `portfolio.show`, `blog.index`, `blog.show`, `contact`). Detail blog/portofolio memakai parameter `{slug}`. |
-| **Controller** | `app/Http/Controllers/` | `HomeController`, `AboutController`, `PortfolioController`, `BlogController`, `ContactController`. Data dummy disimpan sebagai array di controller, lalu dikirim ke view dengan `compact()`. Slug yang tidak ada → `abort(404)`. |
+| **Routing** | `routes/web.php` | Semua halaman memakai *named route* (`home`, `about`, `portfolio.index`, `portfolio.show`, `blog.index`, `blog.show`, `contact`, `locale.switch`). Detail blog/portofolio memakai parameter `{slug}`; route bahasa dibatasi dengan `whereIn()`. |
+| **Controller** | `app/Http/Controllers/` | `HomeController`, `AboutController`, `PortfolioController`, `BlogController`, `ContactController`, `LocaleController`. Data dummy disimpan sebagai array di controller, lalu dikirim ke view dengan `compact()`. Slug yang tidak ada → `abort(404)`. |
+| **Middleware** | `app/Http/Middleware/SetLocale.php` | Membaca bahasa dari session di setiap request, lalu memasang `App::setLocale()` dan `Carbon::setLocale()`. Didaftarkan di `bootstrap/app.php`. |
+| **Localization** | `lang/{id,en,zh}/` | Semua teks memakai `__('file.kunci')`. Controller menyimpan data yang sama di semua bahasa (slug, warna, tahun), sedangkan teksnya diambil dari file `lang`. |
 | **View** | `resources/views/` | Setiap halaman punya file view sendiri (`home`, `about`, `portfolio/index`, `portfolio/show`, `blog/index`, `blog/show`, `contact`, `errors/404`). |
 | **Blade** | Semua view | `{{ }}`, `@foreach`, `@forelse`, `@if`, `@isset`, `@switch`, `@class`, `@php`, `$loop->first`, `@section/@yield`. |
 | **Layout** | `resources/views/layouts/app.blade.php` | Struktur halaman bersama (head, navbar, rail samping, footer, script). Halaman memakai `@extends('layouts.app')`. |
@@ -50,7 +57,8 @@ Website ini memperkenalkan profil, pengalaman, keahlian, portofolio, dan tulisan
 | `<x-line-badge>` | Lencana bulat ala simbol jalur subway |
 | `<x-poster>` | Ilustrasi SVG untuk proyek/artikel (atau foto jika `image` diisi) |
 | `<x-timeline-item>` | Garis waktu pengalaman & pendidikan |
-| `<x-stat>`, `<x-avatar>`, `<x-marquee>`, `<x-arrow>` | Elemen kecil yang dipakai berulang |
+| `<x-preferences>` | Header & menu: pilihan bahasa dan tema |
+| `<x-stat>`, `<x-avatar>`, `<x-marquee>`, `<x-arrow>`, `<x-theme-icon>` | Elemen kecil yang dipakai berulang |
 
 Data identitas yang dipakai banyak komponen (nama, email, media sosial, menu) ada di **`config/site.php`** dan dipanggil dengan `config('site.xxx')`.
 
@@ -58,7 +66,9 @@ Data identitas yang dipakai banyak komponen (nama, email, media sosial, menu) ad
 
 ```
 app/Http/Controllers/     ← logika & data dummy
-config/site.php           ← identitas, kontak, menu navigasi
+app/Http/Middleware/      ← SetLocale (bahasa aktif)
+config/site.php           ← identitas, kontak, menu, daftar bahasa & tema
+lang/id, lang/en, lang/zh ← semua teks dalam 3 bahasa
 routes/web.php            ← routing
 resources/views/
 ├── layouts/app.blade.php ← layout utama
@@ -84,7 +94,30 @@ php artisan serve
 
 Buka `http://localhost:8000`.
 
-> Website tidak memakai database (data dummy ada di controller). Jika muncul error terkait session/database, jalankan `php artisan migrate` (membuat file SQLite bawaan Laravel).
+> Website tidak memakai database (data dummy ada di controller). Session disimpan sebagai file (`SESSION_DRIVER=file`), jadi tidak perlu menjalankan migrasi.
+
+Menjalankan test (mengecek semua halaman di ketiga bahasa dan halaman 404):
+
+```bash
+php artisan test
+```
+
+## Multi Bahasa
+
+1. Pengunjung menekan tombol **ID / EN / 中文** di header (atau di menu pada layar kecil).
+2. Tombol mengarah ke route `/lang/{kode}`. `LocaleController` menyimpan kode bahasa ke **session**, lalu kembali ke halaman sebelumnya.
+3. Middleware `SetLocale` membaca session di setiap request dan memasang bahasa aktif.
+4. View menampilkan teks dengan `__('site.nav.home')`, `__('portfolio.projects.slug.title')`, dan seterusnya. Laravel otomatis mengambil teks dari `lang/{bahasa-aktif}/`.
+5. Format tanggal ikut bahasa melalui `Carbon::translatedFormat()` (misalnya "02 Mei 2026", "May 2, 2026", "2026年5月2日").
+
+Menambah bahasa baru cukup dengan membuat folder `lang/{kode}/` berisi file yang sama, lalu menambahkan kodenya di `config/site.php` → `locales`.
+
+## Tema (Terang / Gelap / Kontras)
+
+- Semua warna di `public/css/style.css` memakai **CSS custom properties** (token) seperti `--bg`, `--fg`, `--block`, dan `--muted`. Nilainya didefinisikan ulang untuk `[data-theme="dark"]` dan `[data-theme="contrast"]`.
+- Script kecil di `<head>` memasang tema **sebelum halaman tampil**, supaya tidak berkedip. Urutan pemilihannya: pilihan tersimpan → pengaturan kontras tinggi sistem → mode gelap sistem → terang.
+- Tombol tema (`main.js`) mengganti atribut `data-theme` di `<html>` dan menyimpan pilihan ke `localStorage`.
+- **Tema kontras** memakai hitam-putih murni dengan aksen kuning, garis tepi tegas, garis bawah pada link, dan outline fokus yang lebih tebal.
 
 ## Mengganti Konten
 
@@ -92,6 +125,7 @@ Buka `http://localhost:8000`.
 - **Gambar proyek:** taruh file di `public/images/portfolio/{slug}/` dengan nama berurutan (`01`, `02`, ...). File `01` menjadi cover, semua file tampil di carousel. Daftar gambar dibaca otomatis oleh `PortfolioController::gallery()`.
 - **Gambar artikel:** isi kolom `'image'` di `BlogController`. Jika `null`, ilustrasi poster SVG yang tampil.
 - **Email & media sosial:** ubah di `config/site.php`.
+- **Teks (semua bahasa):** ubah di `lang/id/`, `lang/en/`, dan `lang/zh/`. Contohnya, deskripsi proyek ada di `lang/{bahasa}/portfolio.php` dan artikel di `lang/{bahasa}/blog.php`.
 
 ## Motion & Interaksi (`public/js/main.js`)
 
@@ -116,6 +150,7 @@ Proyek ini dikerjakan dengan bantuan **Claude (Anthropic)** sebagai asisten:
 - Menganalisis referensi desain (website brandappart.com dan referensi gaya Swiss/subway) menjadi konsep visual.
 - Menyusun data profil dari LinkedIn pribadi saya ke dalam struktur array.
 - Membantu menulis kode controller, view, komponen Blade, CSS, dan JavaScript, serta draf artikel blog dummy.
+- Membantu membuat fitur multi bahasa dan tema, termasuk terjemahan teks ke Bahasa Inggris dan Mandarin.
 
 Seluruh kode sudah saya pelajari dan dapat saya jelaskan, termasuk alur routing → controller → view, cara data dikirim ke Blade, cara kerja layout & components, serta logika animasinya.
 

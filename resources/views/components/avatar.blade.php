@@ -5,8 +5,8 @@
 
 <span {{ $attributes->merge(['class' => "avatar avatar--{$size}"]) }}>
     @if ($photo && file_exists(public_path($photo)))
-        <img src="{{ asset($photo) }}" alt="Foto {{ config('site.name') }}">
+        <img src="{{ asset($photo) }}" alt="{{ __('site.photo_alt', ['name' => config('site.name')]) }}">
     @else
-        <span class="avatar__initials" role="img" aria-label="Avatar {{ config('site.name') }}">{{ config('site.initials') }}</span>
+        <span class="avatar__initials" role="img" aria-label="{{ __('site.avatar_alt', ['name' => config('site.name')]) }}">{{ config('site.initials') }}</span>
     @endif
 </span>

@@ -15,6 +15,25 @@
     const $ = (sel, ctx = document) => ctx.querySelector(sel);
     const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
+    /* ---------- 0. Tema: light / dark / contrast ----------
+       Tema awal sudah dipasang oleh script kecil di <head> (supaya tidak berkedip).
+       Di sini hanya tombol pilihannya: simpan ke localStorage & tandai tombol aktif. */
+    const themeButtons = $$('[data-theme-option]');
+    const markTheme = (theme) => {
+        themeButtons.forEach((button) => {
+            const active = button.dataset.themeOption === theme;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-pressed', String(active));
+        });
+    };
+    const applyTheme = (theme) => {
+        html.setAttribute('data-theme', theme);
+        try { localStorage.setItem('theme', theme); } catch (e) { /* mode privat: abaikan */ }
+        markTheme(theme);
+    };
+    themeButtons.forEach((button) => button.addEventListener('click', () => applyTheme(button.dataset.themeOption)));
+    markTheme(html.getAttribute('data-theme'));
+
     /* ---------- 1. Scroll halus ---------- */
     let lenis = null;
     if (window.Lenis && !reduceMotion) {
@@ -69,12 +88,14 @@
         toggle.setAttribute('aria-expanded', String(open));
         menu.setAttribute('aria-hidden', String(!open));
         label.textContent = open ? label.dataset.close : label.dataset.open;
-        $$('a', menu).forEach((a) => { a.tabIndex = open ? 0 : -1; });
+        $$('a, button', menu).forEach((el) => { el.tabIndex = open ? 0 : -1; });
         if (lenis) open ? lenis.stop() : lenis.start();
         if (open) setTimeout(() => $('a', menu)?.focus({ preventScroll: true }), 300);
     };
 
     if (toggle && menu) {
+        // Selama menu tertutup, isinya tidak bisa dijangkau dengan Tab.
+        $$('a, button', menu).forEach((el) => { el.tabIndex = -1; });
         toggle.addEventListener('click', () => setMenu(!body.classList.contains('menu-open')));
         menu.addEventListener('click', (event) => { if (event.target === menu) setMenu(false); });
         document.addEventListener('keydown', (event) => {
@@ -212,7 +233,7 @@
     /* ---------- 8c. Jam lokal ---------- */
     const clock = $('[data-clock]');
     if (clock) {
-        const format = new Intl.DateTimeFormat('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: clock.dataset.tz, hour12: false });
+        const format = new Intl.DateTimeFormat(html.lang || 'id', { hour: '2-digit', minute: '2-digit', timeZone: clock.dataset.tz, hour12: false });
         const renderClock = () => { clock.textContent = `${format.format(new Date())} WIB`; };
         renderClock();
         setInterval(renderClock, 15000);
@@ -338,9 +359,9 @@
             const original = button.textContent;
             try {
                 await navigator.clipboard.writeText(button.dataset.copy);
-                button.textContent = 'Tersalin ✓';
+                button.textContent = button.dataset.copyDone;
             } catch {
-                button.textContent = 'Gagal menyalin';
+                button.textContent = button.dataset.copyFail;
             }
             setTimeout(() => { button.textContent = original; }, 1800);
         });

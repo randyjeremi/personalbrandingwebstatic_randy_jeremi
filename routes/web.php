@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,3 +19,8 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+
+// Ganti bahasa: /lang/id, /lang/en, /lang/zh
+Route::get('/lang/{locale}', LocaleController::class)
+    ->whereIn('locale', array_keys(config('site.locales')))
+    ->name('locale.switch');

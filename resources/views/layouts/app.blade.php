@@ -1,14 +1,28 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ app()->getLocale() }}" data-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Beranda') — {{ config('site.name') }} · {{ config('site.role') }}</title>
-    <meta name="description" content="@yield('description', config('site.tagline'))">
+    <title>@yield('title', __('home.title')) — {{ config('site.name') }} · {{ __('site.role') }}</title>
+    <meta name="description" content="@yield('description', __('site.tagline'))">
 
-    {{-- Menandai bahwa JavaScript aktif, agar animasi "muncul" hanya dipakai jika JS berjalan. --}}
-    {{-- Pengaman: jika main.js gagal dimuat, tampilkan konten tanpa animasi setelah 3 detik. --}}
+    {{--
+        1. Pasang tema SEBELUM halaman tampil, supaya tidak berkedip.
+           Urutan: pilihan tersimpan → pengaturan "kontras tinggi" sistem → mode gelap sistem → terang.
+        2. Tandai bahwa JavaScript aktif, agar animasi "muncul" hanya dipakai jika JS berjalan.
+        3. Pengaman: jika main.js gagal dimuat, tampilkan konten tanpa animasi setelah 3 detik.
+    --}}
     <script>
+        (function () {
+            var themes = @json(config('site.themes'));
+            var theme = null;
+            try { theme = localStorage.getItem('theme'); } catch (e) {}
+            if (themes.indexOf(theme) === -1) {
+                theme = matchMedia('(prefers-contrast: more)').matches ? 'contrast'
+                    : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
         document.documentElement.classList.add('js');
         setTimeout(function () {
             if (!window.__rjReady) {
@@ -38,8 +52,8 @@
 
     @unless (request()->routeIs('contact'))
         <a href="{{ route('contact') }}" class="cta-pill" data-cta-pill>
-            <span class="cta-pill__text">Punya proyek? Ayo ngobrol</span>
-            <span class="cta-pill__btn">Hubungi <x-arrow /></span>
+            <span class="cta-pill__text">{{ __('site.cta_pill') }}</span>
+            <span class="cta-pill__btn">{{ __('site.cta_pill_button') }} <x-arrow /></span>
         </a>
     @endunless
 

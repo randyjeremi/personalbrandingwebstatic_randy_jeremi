@@ -1,27 +1,26 @@
 @extends('layouts.app')
 
-@section('title', 'Kontak')
+@section('title', __('contact.title'))
 
 @section('content')
 
-    <section class="page-hero page-hero--contact" data-station="Kontak">
+    <section class="page-hero page-hero--contact" data-station="{{ __('contact.title') }}">
         <div class="page-hero__label" data-reveal="fade">
-            <x-line-badge letter="5" color="blue" size="sm" /> <span class="eyebrow">Kontak</span>
+            <x-line-badge letter="5" color="blue" size="sm" /> <span class="eyebrow">{{ __('contact.label') }}</span>
         </div>
-        <x-section-title tag="h1" title="Ayo" muted="ngobrol." size="hero" />
-        <p class="lead page-hero__lead" data-reveal="fade">
-            Terbuka untuk proyek freelance, magang, maupun kolaborasi. Kirim email atau sapa saya lewat media sosial.
-        </p>
+        <x-section-title tag="h1" :title="__('contact.heading')" :muted="__('contact.muted')" size="hero" />
+        <p class="lead page-hero__lead" data-reveal="fade">{{ __('contact.lead') }}</p>
 
         <div class="email-block" data-reveal="card">
-            <span class="eyebrow">Email</span>
-            <a href="mailto:{{ config('site.email') }}" class="email-block__link" data-cursor="Kirim">{{ config('site.email') }}</a>
-            <button type="button" class="chip" data-copy="{{ config('site.email') }}">Salin email</button>
+            <span class="eyebrow">{{ __('contact.email') }}</span>
+            <a href="mailto:{{ config('site.email') }}" class="email-block__link" data-cursor="{{ __('site.cursor.send') }}">{{ config('site.email') }}</a>
+            <button type="button" class="chip" data-copy="{{ config('site.email') }}"
+                    data-copy-done="{{ __('site.copy.done') }}" data-copy-fail="{{ __('site.copy.fail') }}">{{ __('site.copy.button') }}</button>
         </div>
     </section>
 
-    <section class="section section--tight" data-station="Sosial">
-        <p class="eyebrow">Media sosial</p>
+    <section class="section section--tight" data-station="{{ __('contact.socials') }}">
+        <p class="eyebrow">{{ __('contact.socials') }}</p>
         <ul class="toc toc--big">
             @foreach ($socials as $social)
                 <li data-reveal="fade">
