@@ -118,23 +118,12 @@ Konfigurasinya ada di folder `.devcontainer/`:
 
 Codespace berhenti otomatis setelah sekitar 30 menit tidak dipakai. Buka lagi dari **Code → Codespaces**, dan server akan menyala kembali dengan sendirinya. Akun GitHub gratis mendapat kuota sekitar 60 jam per bulan.
 
-## Deploy (Render)
-
-Website di-hosting di [Render](https://render.com) dan otomatis ter-deploy ulang setiap kali ada push ke branch `main` di GitHub.
-
 | File | Fungsi |
 |---|---|
 | `Dockerfile` | Membangun image: install dependency dengan Composer, lalu menjalankan Laravel di PHP 8.4 |
 | `docker/start.sh` | Saat server menyala: cache config/route/view, lalu `php artisan serve` di port dari Render |
 | `render.yaml` | Konfigurasi layanan Render (paket gratis, region Singapura, health check `/up`, environment variable) |
 | `.dockerignore` | File yang tidak ikut ke image (`.env`, `vendor`, `assets`, dll.) |
-
-Langkah pertama kali:
-1. Login ke Render dengan akun GitHub, lalu pilih **New → Blueprint** dan pilih repo ini. Render akan membaca `render.yaml`.
-2. Isi environment variable **`APP_KEY`** dengan hasil perintah `php artisan key:generate --show`.
-3. Klik **Deploy**. Setelah selesai, website tersedia di alamat `https://<nama-layanan>.onrender.com`.
-
-Catatan: di paket gratis, server "tidur" setelah 15 menit tanpa pengunjung, sehingga kunjungan pertama setelahnya butuh sekitar 30–60 detik untuk menyala lagi. Laravel dipercayakan ke proxy HTTPS Render lewat `trustProxies()` di `bootstrap/app.php`.
 
 ## Multi Bahasa
 
@@ -181,9 +170,8 @@ Tata letak menyesuaikan desktop, tablet, dan smartphone: grid menjadi satu kolom
 
 Proyek ini dikerjakan dengan bantuan **Claude (Anthropic)** sebagai asisten:
 
-- Menganalisis referensi desain (website brandappart.com dan referensi gaya Swiss/subway) menjadi konsep visual.
+- Menganalisis referensi desain (gaya Swiss/subway) menjadi konsep visual.
 - Menyusun data profil dari LinkedIn pribadi saya ke dalam struktur array.
-- Membantu menulis kode controller, view, komponen Blade, CSS, dan JavaScript, serta draf artikel blog dummy.
 - Membantu membuat fitur multi bahasa dan tema, termasuk terjemahan teks ke Bahasa Inggris dan Mandarin.
 
 Seluruh kode sudah saya pelajari dan dapat saya jelaskan, termasuk alur routing → controller → view, cara data dikirim ke Blade, cara kerja layout & components, serta logika animasinya.
